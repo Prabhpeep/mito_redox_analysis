@@ -6,16 +6,15 @@ import matplotlib.pyplot as plt
 
 # Columns to keep during preprocessing
 KEEP_COLUMNS_NET = [
-    'feature_1', 'feature_2', 'feature_3', 'feature_4', 
-    'feature_5', 'feature_6', 'feature_7', 'feature_8', 
-    'feature_9_net', 'feature_10', 'target_var'
+    'cc_length_(um)', 'nodes', 'edges', 'element_pixel_intensity_ratio', 'cc_max_PK', 'line_id',
+    'diameter', 'element_length_(um)', 'normalized_length_by_networks', 'edge_density', 
+    'node_density', 'oxidation_zone'
 ]
 
 KEEP_COLUMNS_NNET = [
-    'feature_1', 'feature_2', 'feature_3', 'feature_4', 
-    'feature_5', 'feature_6', 'feature_7', 'feature_8', 
-    'feature_9_nonnet', 'feature_10', 'target_var'
-]
+    'cc_length_(um)', 'nodes', 'edges', 'element_pixel_intensity_ratio', 'cc_max_PK', 'line_id', 
+    'diameter', 'element_length_(um)', 'normalized_length_by_standalones', 'edge_density', 
+    'node_density', 'oxidation_zone']
 
 
 # Data Loading & Splitting Functions
