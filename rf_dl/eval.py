@@ -54,5 +54,6 @@ def evaluate_model(df, model=None, model_name="Model"):
     return {
         'model': model,
         'cv_mean': cv_scores.mean(),
+        'cv_scores': cv_scores,
         'test_score': test_score
     }

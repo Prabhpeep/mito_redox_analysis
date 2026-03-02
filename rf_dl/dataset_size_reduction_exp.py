@@ -82,7 +82,7 @@ def plot_experiment_results(results, output_path=None):
     plt.ylabel("R² Score")
     plt.ylim(0, 1.05) # R2 is typically <= 1
     plt.legend()
-    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.grid(False)
     
     if output_path:
         plt.savefig(output_path)

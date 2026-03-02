@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import data_loader as dp
 import tune_hyperparams as th
 import eval as ev
@@ -14,20 +15,26 @@ def main():
     nnet_dir = "mito_data/non-nets"
     
     net_dfs = []
+    net_group_names = []
     nnet_dfs = []
     
     # Load processed individual files
     if os.path.exists(net_dir):
-        for f in os.listdir(net_dir):
+        for f in sorted(os.listdir(net_dir)):
             if f.endswith(".csv"):
                 df = pd.read_csv(os.path.join(net_dir, f))
-                net_dfs.append(dp.process_single_df(df, is_network=True))
+                processed = dp.process_single_df(df, is_network=True)
+                if not processed.empty:
+                    net_dfs.append(processed)
+                    net_group_names.append(f.replace("_net_sheet.csv", "").replace(".csv", ""))
 
     if os.path.exists(nnet_dir):
-        for f in os.listdir(nnet_dir):
+        for f in sorted(os.listdir(nnet_dir)):
             if f.endswith(".csv"):
                 df = pd.read_csv(os.path.join(nnet_dir, f))
-                nnet_dfs.append(dp.process_single_df(df, is_network=False))
+                processed = dp.process_single_df(df, is_network=False)
+                if not processed.empty:
+                    nnet_dfs.append(processed)
                 
     print(f"Pooling {len(net_dfs)} Network groups and {len(nnet_dfs)} Non-Netwroked groups...")
     
@@ -55,6 +62,7 @@ def main():
 
     if net_results and net_results['model']:
         trained_model = net_results['model']
+        cv_scores = net_results['cv_scores']
         
         # We need the specific Test set used for evaluation to plot Pred vs Actual
         # Since random_state=0 is fixed in eval.py, we can reproduce the split here.
@@ -83,6 +91,33 @@ def main():
             title="Random Forest: Predicted vs Actual (Networks)", 
             output_path="analysis_outputs/pred_vs_actual.png"
         )
+        
+        # Plot MAE vs Binned Target
+        pa.plot_mae_vs_binned_target(
+            y_test, 
+            y_pred, 
+            step=0.025, 
+            output_path="analysis_outputs/mae_vs_binned.png"
+        )
+        
+        # Group-wise Scores for Networks
+        group_scores = []
+        for df_g in net_dfs:
+            target_col = 'element_pixel_intensity_ratio'
+            drop_cols = ['line_id']
+            cols_to_drop = [c for c in [target_col] + drop_cols if c in df_g.columns]
+            X_g = df_g.drop(columns=cols_to_drop, axis=1)
+            y_g = df_g[target_col]
+            score = trained_model.score(X_g, y_g)
+            group_scores.append(score)
+            
+        pa.plot_group_cv_scores(
+            cv_scores, 
+            net_group_names, 
+            group_scores, 
+            title=f"Networks (N={len(net_pooled)}) - Model CV Results", 
+            output_path="analysis_outputs/group_cv_scores.png"
+        )
 
         # Dataset Size Reduction Experiment
 
@@ -94,10 +129,15 @@ def main():
         # Run experiment using an unfitted base model
         base_rf = ev.get_default_model()
         
+        # Calculate reduction fraction limit based on nnet dataset size
+        min_frac = len(nnet_pooled) / len(net_pooled)
+        dynamic_fractions = np.linspace(min_frac, 1.0, 10).tolist()
+        
         experiment_results = dsr.run_reduction_experiment(
             X_full, 
             y_full, 
-            base_model=base_rf
+            base_model=base_rf,
+            fractions=dynamic_fractions
         )
         
         dsr.plot_experiment_results(
