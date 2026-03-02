@@ -13,7 +13,7 @@ def run_bayes_search(X_train, y_train, n_iter=50, random_state=0):
     search_spaces = {
         'n_estimators': (70, 100),
         'max_depth': (30, 50),
-        'ccp_alpha': Real(0, 0.5),
+        'min_samples_split': (2, 10),
     }
     
     opt = BayesSearchCV(

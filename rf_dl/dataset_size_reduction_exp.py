@@ -74,8 +74,10 @@ def plot_experiment_results(results, output_path=None):
     sizes = results['train_size']
     
     plt.figure(figsize=(10, 6))
-    plt.plot(sizes, results['train_score'], 'o-', label='Train Score (R²)', color='blue', linewidth=2)
-    plt.plot(sizes, results['test_score'], 'o-', label='Test Score (R²)', color='green', linewidth=2)
+    
+    # Only chart test score, color red
+    plt.plot(sizes, results['test_score'], 'o-', label='Test Score (R²)', color='red', linewidth=2)
+    plt.gca().invert_xaxis() # Reverse the x axis
     
     plt.title("Model Performance vs. Dataset Size")
     plt.xlabel("Number of Training Samples")

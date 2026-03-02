@@ -87,8 +87,11 @@ def pool_and_process_data(net_pooled, nnet_pooled):
     nnet_pooled.dropna(how="any", inplace=True) # Matches notebook logic cell 6
     
     # Filter Outliers 
-    net_pooled = net_pooled[net_pooled['element_pixel_intensity_ratio'] <= 0.5]
-    nnet_pooled = nnet_pooled[nnet_pooled['element_pixel_intensity_ratio'] <= 0.5]
+    if not net_pooled.empty and 'element_pixel_intensity_ratio' in net_pooled.columns:
+        net_pooled = net_pooled[net_pooled['element_pixel_intensity_ratio'] <= 0.5]
+        
+    if not nnet_pooled.empty and 'element_pixel_intensity_ratio' in nnet_pooled.columns:
+        nnet_pooled = nnet_pooled[nnet_pooled['element_pixel_intensity_ratio'] <= 0.5]
     
     return net_pooled, nnet_pooled
 

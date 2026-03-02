@@ -3,7 +3,7 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 
-def plot_feature_importance(model, feature_names, top_n=10, output_path=None):
+def plot_feature_importance(model, feature_names, top_n=10, title="Top 10 Feature Importances", output_path=None):
     """
     Extracts and plots feature importances from a trained Random Forest model.
     """
@@ -23,7 +23,7 @@ def plot_feature_importance(model, feature_names, top_n=10, output_path=None):
     # Plot
     plt.figure(figsize=(10, 6))
     sns.barplot(x='Feature', y='Importance', data=feature_imp_df.head(top_n), color='red')
-    plt.title(f'Top {top_n} Feature Importances')
+    plt.title(title)
     plt.xlabel('Features')
     plt.ylabel('Importance Score')
     plt.xticks(rotation=45, ha='right')
@@ -31,10 +31,9 @@ def plot_feature_importance(model, feature_names, top_n=10, output_path=None):
     plt.tight_layout()
     
     if output_path:
-        plt.savefig(output_path)
+        plt.savefig(output_path, bbox_inches='tight')
         print(f"Feature importance plot saved to {output_path}")
-    else:
-        plt.show()
+    plt.show()
 
 def plot_predicted_vs_actual(y_test, y_pred, title="Predicted vs Actual", output_path=None):
     """
@@ -43,27 +42,31 @@ def plot_predicted_vs_actual(y_test, y_pred, title="Predicted vs Actual", output
     plt.figure(figsize=(8, 8))
     
     # Scatter plot
-    plt.scatter(y_test, y_pred, alpha=0.5, color='royalblue', edgecolor='k', s=50, label='Data Points')
+    plt.scatter(y_test, y_pred, alpha=0.8, color='firebrick', s=15, label='Data Points')
     
     # Perfect prediction line (y=x)
     min_val = min(np.min(y_test), np.min(y_pred))
     max_val = max(np.max(y_test), np.max(y_pred))
-    plt.plot([min_val, max_val], [min_val, max_val], color='red', linestyle='--', linewidth=2, label='Perfect Fit')
+    plt.plot([min_val, max_val], [min_val, max_val], color='black', alpha=0.7, linestyle='--', linewidth=1.2, label='Ideal Prediction (y = x)')
+    
+    # Regression line (Least Squares)
+    m, b = np.polyfit(y_test, y_pred, 1)
+    x_line = np.array([min_val, max_val])
+    plt.plot(x_line, m*x_line + b, color='red', linewidth=2.5, label='Regression Line (Least Squares)')
     
     plt.title(title)
-    plt.xlabel("Actual Values (cc_pixel_intensity_ratio)")
+    plt.xlabel("Actual Values (element_pixel_intensity_ratio)")
     plt.ylabel("Predicted Values")
     plt.legend()
     plt.grid(False)
     plt.tight_layout()
     
     if output_path:
-        plt.savefig(output_path)
+        plt.savefig(output_path, bbox_inches='tight')
         print(f"Regression plot saved to {output_path}")
-    else:
-        plt.show()
+    plt.show()
 
-def plot_mae_vs_binned_target(y_test, y_pred, step=0.025, output_path=None):
+def plot_mae_vs_binned_target(y_test, y_pred, step=0.025, title="Mean Absolute Error and Target Value Distribution", output_path=None):
     """
     Plots Mean Absolute Error against binned target values along with percentage of test set.
     """
@@ -101,9 +104,9 @@ def plot_mae_vs_binned_target(y_test, y_pred, step=0.025, output_path=None):
     
     # Bar plot for MAE on Left Y-Axis
     width = step * 0.8
-    # Solid red bars
+    # Transparent bars with red edges
     bars = ax1.bar(bin_centers, bin_stats['MAE'], width=width, align='edge',
-                   facecolor='red', edgecolor='red', linewidth=2, label='Mean Absolute Error')
+                   facecolor='none', edgecolor='red', linewidth=2, label='Mean Absolute Error')
     
     ax1.set_xlabel("Binned Target Value")
     ax1.set_ylabel("Mean Absolute Prediction Error")
@@ -120,7 +123,7 @@ def plot_mae_vs_binned_target(y_test, y_pred, step=0.025, output_path=None):
     ax2.set_ylim(bottom=0)
     ax2.grid(False)
     
-    plt.title("Mean Absolute Error and Target Value Distribution")
+    plt.title(title)
     
     # Combine legends from both axes
     lines, labels = ax1.get_legend_handles_labels()
@@ -130,12 +133,11 @@ def plot_mae_vs_binned_target(y_test, y_pred, step=0.025, output_path=None):
     plt.tight_layout()
     
     if output_path:
-        plt.savefig(output_path)
+        plt.savefig(output_path, bbox_inches='tight')
         print(f"MAE vs Binned Target plot saved to {output_path}")
-    else:
-        plt.show()
+    plt.show()
 
-def plot_group_cv_scores(pooled_scores, group_names, group_scores, title="Networks - Model CV Results", output_path=None):
+def plot_group_cv_scores(pooled_scores, group_names, group_scores, title="Networks - Model CV Results", y_lim=None, output_path=None):
     """
     Plots CV scores for pooled model vs individual group test scores.
     """
@@ -143,7 +145,7 @@ def plot_group_cv_scores(pooled_scores, group_names, group_scores, title="Networ
     
     # Combine the data, inserting a dummy value for the space (gap)
     n_pooled = len(pooled_scores)
-    labels = [""] * n_pooled + [""] + list(group_names)
+    labels = [f"CV Fold {i+1}" for i in range(n_pooled)] + [""] + list(group_names)
     values = list(pooled_scores) + [0.0] + list(group_scores)
     
     # x positions
@@ -153,7 +155,11 @@ def plot_group_cv_scores(pooled_scores, group_names, group_scores, title="Networ
     plt.bar(x_positions, values, color='red', edgecolor='red', linewidth=2)
     
     plt.ylabel("R² (test set)", color='red')
-    plt.ylim(0.0, 1.0)
+    if y_lim:
+        plt.ylim(y_lim)
+    else:
+        min_val = min(0.0, min(values) - 0.1)
+        plt.ylim(min_val, 1.0)
     
     # Customize the x ticks
     plt.xticks(x_positions, labels, rotation=45, ha='right')
@@ -170,7 +176,6 @@ def plot_group_cv_scores(pooled_scores, group_names, group_scores, title="Networ
     plt.subplots_adjust(bottom=0.25) # Ensure space for text
     
     if output_path:
-        plt.savefig(output_path)
+        plt.savefig(output_path, bbox_inches='tight')
         print(f"Group CV score plot saved to {output_path}")
-    else:
-        plt.show()
+    plt.show()
