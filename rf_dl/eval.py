@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 
-def get_train_test_split(df, target_col='target_var', drop_cols=['feature_10'], test_size=0.3):
+def get_train_test_split(df, target_col='element_pixel_intensity_ratio', drop_cols=['line_id'], test_size=0.3):
     """
     Splits dataframe into X and y, then train and test sets.
     
@@ -20,8 +20,7 @@ def get_default_model():
     """Returns the RandomForestRegressor with optimized defaults."""
     return RandomForestRegressor(
         max_depth=35, 
-        n_estimators=75, 
-        criterion='squared_error',
+        n_estimators=77, 
         random_state=0
     )
 
