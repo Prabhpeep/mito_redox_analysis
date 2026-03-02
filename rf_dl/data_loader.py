@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 KEEP_COLUMNS_NET = [
     'cc_length_(um)', 'nodes', 'edges', 'element_pixel_intensity_ratio', 'cc_max_PK', 'line_id',
     'diameter', 'element_length_(um)', 'normalized_length_by_networks', 'edge_density', 
-    'node_density', 'oxidation_zone'
+    'node_density'
 ]
 
 KEEP_COLUMNS_NNET = [
     'cc_length_(um)', 'nodes', 'edges', 'element_pixel_intensity_ratio', 'cc_max_PK', 'line_id', 
     'diameter', 'element_length_(um)', 'normalized_length_by_standalones', 'edge_density', 
-    'node_density', 'oxidation_zone'
+    'node_density'
     ]
 
 
@@ -87,8 +87,8 @@ def pool_and_process_data(net_pooled, nnet_pooled):
     nnet_pooled.dropna(how="any", inplace=True) # Matches notebook logic cell 6
     
     # Filter Outliers 
-    net_pooled = net_pooled[net_pooled['target_var'] <= 0.5]
-    nnet_pooled = nnet_pooled[nnet_pooled['target_var'] <= 0.5]
+    net_pooled = net_pooled[net_pooled['element_pixel_intensity_ratio'] <= 0.5]
+    nnet_pooled = nnet_pooled[nnet_pooled['element_pixel_intensity_ratio'] <= 0.5]
     
     return net_pooled, nnet_pooled
 
