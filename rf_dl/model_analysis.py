@@ -58,7 +58,7 @@ def plot_predicted_vs_actual(y_test, y_pred, title="Predicted vs Actual", is_net
     # Regression line (Least Squares)
     m, b = np.polyfit(y_test, y_pred, 1)
     x_line = np.array([min_val, max_val])
-    plt.plot(x_line, m*x_line + b, color='black', linewidth=4.0, label='Regression Line (Least Squares)')
+    plt.plot(x_line, m*x_line + b, color='#333333', linewidth=4.0, label='Regression Line (Least Squares)')
     
     plt.title(title)
     plt.xlabel("Actual Values")
@@ -111,7 +111,7 @@ def plot_mae_vs_binned_target(y_test, y_pred, step=0.025, title="Mean Absolute E
                    facecolor='none', edgecolor=color, linewidth=2, label='Mean Absolute Error')
     
     ax1.set_xlabel("Binned Target Value")
-    ax1.set_ylabel("Mean Absolute Prediction Error", fontsize=28)
+    ax1.set_ylabel("Mean Absolute Prediction Error", fontsize=24)
     ax1.grid(False)
     
     # FIX: Make the y-axis numbers bigger on the left axis
@@ -124,7 +124,7 @@ def plot_mae_vs_binned_target(y_test, y_pred, step=0.025, title="Mean Absolute E
     line, = ax2.plot(line_x, bin_stats['Percentage'], color=color, linewidth=2.5, marker='o',
                      label='Target Value Distribution (scaled)')
     
-    ax2.set_ylabel("Percentage of Test Set", fontsize=28)
+    ax2.set_ylabel("Percentage of Test Set", fontsize=24)
     ax2.set_ylim(bottom=0)
     ax2.grid(False)
     
