@@ -67,21 +67,37 @@ def run_reduction_experiment(X, y, base_model, fractions=None, random_state=0):
         
     return results
 
-def plot_experiment_results(results, output_path=None):
+def plot_experiment_results(results, output_path=None, title="Model Performance vs. Dataset Size"):
     """
     Plots the Train vs Test scores across different dataset sizes.
     """
     sizes = results['train_size']
-    
+    title_lower = title.lower() if title else ""
+    if 'non networked' in title_lower or 'non network' in title_lower or 'non-network' in title_lower or 'non_network' in title_lower:
+        color = 'black'
+    else:
+        color = '#CC0000'
+        
     plt.figure(figsize=(10, 6))
     
-    # Only chart test score, color red
-    plt.plot(sizes, results['test_score'], 'o-', label='Test Score (R²)', color='red', linewidth=2)
+    # Thicker line (4), bigger dots on the line (markersize=12)
+    plt.plot(sizes, results['test_score'], 'o-', label='Test Score (R²)', color=color, linewidth=4, markersize=12)
     plt.gca().invert_xaxis() # Reverse the x axis
     
-    plt.title("Model Performance vs. Dataset Size")
+    plt.title(title)
     plt.xlabel("Number of Training Samples")
-    plt.ylabel("R² Score")
+    plt.ylabel("R² Score", fontsize=36)
+    
+    # Set 12k format and more entries on axis
+    ax = plt.gca()
+    from matplotlib.ticker import FuncFormatter, MaxNLocator
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=10))
+    def format_k(x, pos):
+        if x >= 1000:
+            return f'{int(x/1000)}k'
+        return f'{int(x)}'
+    ax.xaxis.set_major_formatter(FuncFormatter(format_k))
+    
     plt.ylim(0, 1.05) # R2 is typically <= 1
     plt.legend()
     plt.grid(False)

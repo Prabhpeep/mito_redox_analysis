@@ -9,7 +9,7 @@ import dataset_size_reduction_exp as dsr
 
 def main():
 
-# Pooling & Processing
+    # Pooling & Processing
 
     net_dir = "../mito_data/nets"
     nnet_dir = "../mito_data/non-nets"
@@ -26,7 +26,7 @@ def main():
     net_pooled, nnet_pooled = dp.pool_and_process_data(df_net_raw, df_nnet_raw)
     
     print(f"Final Pooled Net Shape: {net_pooled.shape}")
-    print(f"Final Pooled Standalone Shape: {nnet_pooled.shape}")
+    print(f"Final Pooled Non Networked Shape: {nnet_pooled.shape}")
 
     # 2. Extract specific individual network groups for CV Analysis
     net_dfs = []
@@ -43,20 +43,20 @@ def main():
 
     print(f"Processed {len(net_dfs)} individual Network groups for CV plotting.")
 
-    # 3. Extract specific individual standalone groups for CV Analysis
+    # 3. Extract specific individual non networked groups for CV Analysis
     nnet_dfs = []
     nnet_group_names = []
     
     for f in sorted(os.listdir(nnet_dir)):
         if f.endswith(".csv"):
             df = pd.read_csv(os.path.join(nnet_dir, f))
-            # Process single standalone DataFrame (pass empty df for network to reuse logic)
+            # Process single non networked DataFrame (pass empty df for network to reuse logic)
             _, processed_nnet = dp.pool_and_process_data(pd.DataFrame(), df)
             if not processed_nnet.empty:
                 nnet_dfs.append(processed_nnet)
-                nnet_group_names.append(f.replace("_standalone_sheet.csv", "").replace(".csv", ""))
+                nnet_group_names.append(f.replace("_non_networked_sheet.csv", "").replace(".csv", ""))
 
-    print(f"Processed {len(nnet_dfs)} individual Standalone groups for CV plotting.")
+    print(f"Processed {len(nnet_dfs)} individual Non Networked groups for CV plotting.")
 
 
     # Modeling Pipeline
@@ -64,7 +64,7 @@ def main():
     
     # 1. Evaluate Non-Networks (Standard Params) ---
     print("\n=== Evaluating Non-Networked Mitochondria ===")
-    nnet_results = ev.evaluate_model(nnet_pooled, model_name="Pooled Standalones")
+    nnet_results = ev.evaluate_model(nnet_pooled, model_name="Pooled Non Networked")
     
     # 2. Evaluate Network (Standard Params) ---
     print("\n=== Evaluating Network Mitochondria ===")
@@ -98,7 +98,7 @@ def main():
             score = trained_model.score(X_g, y_g)
             group_scores.append(score)
             
-        # Group-wise Scores for Standalones calculation (Pre-computed for scaling)
+        # Group-wise Scores for Non Networked calculation (Pre-computed for scaling)
         group_scores_nnet = []
         if nnet_results and nnet_results['model']:
             trained_model_nnet = nnet_results['model']
@@ -125,6 +125,8 @@ def main():
             trained_model, 
             feature_names=X_train.columns, 
             top_n=10, 
+            title="Top 10 Feature Importances (Networks)",
+            is_networked=True,
             output_path="analysis_outputs/feature_importance_net.png"
         )
         
@@ -133,6 +135,7 @@ def main():
             y_test, 
             y_pred, 
             title="Random Forest: Predicted vs Actual (Networks)", 
+            is_networked=True,
             output_path="analysis_outputs/pred_vs_actual_net.png"
         )
         
@@ -140,7 +143,9 @@ def main():
         pa.plot_mae_vs_binned_target(
             y_test, 
             y_pred, 
-            step=0.025, 
+            step=0.025,
+            title="Mean Absolute Error and Target Value Distribution (Networks)",
+            is_networked=True,
             output_path="analysis_outputs/mae_vs_binned_net.png"
         )
         
@@ -150,6 +155,7 @@ def main():
             group_scores, 
             title=f"Networks (N={len(X_test)}) - Model CV Results", 
             y_lim=cv_ylim,
+            is_networked=True,
             output_path="analysis_outputs/group_cv_scores_net.png"
         )
 
@@ -160,19 +166,22 @@ def main():
         X_train_nnet, X_test_nnet, y_train_nnet, y_test_nnet = ev.get_train_test_split(nnet_pooled)
         y_pred_nnet = trained_model_nnet.predict(X_test_nnet)
         
-        print("\n=== Running Prediction Analysis (Standalones) ===")
+        print("\n=== Running Prediction Analysis (Non Networked) ===")
         
         pa.plot_feature_importance(
             trained_model_nnet, 
             feature_names=X_train_nnet.columns, 
             top_n=10, 
+            title="Top 10 Feature Importances (Non Networked)",
+            is_networked=False,
             output_path="analysis_outputs/feature_importance_nnet.png"
         )
         
         pa.plot_predicted_vs_actual(
             y_test_nnet, 
             y_pred_nnet, 
-            title="Random Forest: Predicted vs Actual (Standalones)", 
+            title="Random Forest: Predicted vs Actual (Non Networked)", 
+            is_networked=False,
             output_path="analysis_outputs/pred_vs_actual_nnet.png"
         )
         
@@ -180,6 +189,8 @@ def main():
             y_test_nnet, 
             y_pred_nnet, 
             step=0.025, 
+            title="Mean Absolute Error and Target Value Distribution (Non Networked)",
+            is_networked=False,
             output_path="analysis_outputs/mae_vs_binned_nnet.png"
         )
         
@@ -187,8 +198,9 @@ def main():
             cv_scores_nnet, 
             nnet_group_names, 
             group_scores_nnet, 
-            title=f"Standalones (N={len(X_test_nnet)}) - Model CV Results", 
+            title=f"Non Networked (N={len(X_test_nnet)}) - Model CV Results", 
             y_lim=cv_ylim,
+            is_networked=False,
             output_path="analysis_outputs/group_cv_scores_nnet.png"
         )
 

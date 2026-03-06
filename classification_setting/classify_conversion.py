@@ -39,25 +39,25 @@ if __name__ == "__main__":
     # === Filepaths ===
     csv_paths = [
         "mito_data/nets/group1_net_sheet.csv",
-        "mito_data/non-nets/group1_standalone_sheet.csv",
+        "mito_data/non-nets/group1_non_networked_sheet.csv",
         "mito_data/nets/group2_net_sheet.csv",
-        "mito_data/non-nets/group2_standalone_sheet.csv",
+        "mito_data/non-nets/group2_non_networked_sheet.csv",
         "mito_data/nets/group3_sheet.csv",
-        "mito_data/non-nets/group3_standalone_sheet.csv",
+        "mito_data/non-nets/group3_non_networked_sheet.csv",
         "mito_data/nets/group4_net_sheet.csv",
-        "mito_data/non-nets/group4_standalone_sheet.csv",
+        "mito_data/non-nets/group4_non_networked_sheet.csv",
         "mito_data/nets/group5_net_sheet.csv",
-        "mito_data/non-nets/group5_standalone_sheet.csv",
+        "mito_data/non-nets/group5_non_networked_sheet.csv",
         "mito_data/nets/group6_net_sheet.csv",
-        "mito_data/non-nets/group6_standalone_sheet.csv",
+        "mito_data/non-nets/group6_non_networked_sheet.csv",
         "mito_data/nets/group7_net_sheet.csv",
-        "mito_data/non-nets/group7_standalones_sheet.csv",
+        "mito_data/non-nets/group7_non_networked_sheet.csv",
         "mito_data/nets/group8_net_sheet.csv",
-        "mito_data/non-nets/group8_standalones_sheet.csv",
+        "mito_data/non-nets/group8_non_networked_sheet.csv",
         "mito_data/nets/group9_net_sheet.csv",
-        "mito_data/non-nets/group9_standalones_sheet.csv",
+        "mito_data/non-nets/group9_non_networked_sheet.csv",
         "mito_data/nets/group10_net_sheet.csv",
-        "mito_data/non-nets/group10_standalones_sheet.csv"
+        "mito_data/non-nets/group10_non_networked_sheet.csv"
     ]
 
     # === Run on all files ===
