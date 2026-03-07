@@ -66,9 +66,12 @@ def plot_predicted_vs_actual(y_test, y_pred, title="Predicted vs Actual", is_net
     plt.title(title)
     plt.xlabel("Actual Values")
     plt.ylabel("Predicted Values", fontsize=28)
+
+    current_ymin, current_ymax = plt.ylim()
+    plt.ylim(current_ymin, max(current_ymax, 0.52))
     
     # Dialed down to 24px as previously discussed
-    plt.tick_params(axis='y', labelsize=28)
+    plt.tick_params(axis='y', labelsize=26)
      # Dialed down to 24px as previously discussed
     plt.tick_params(axis='x', labelsize=26)
     

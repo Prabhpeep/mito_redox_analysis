@@ -67,43 +67,66 @@ def run_reduction_experiment(X, y, base_model, fractions=None, random_state=0):
         
     return results
 
-def plot_experiment_results(results, output_path=None, title="Model Performance vs. Dataset Size"):
+def plot_experiment_results(results, output_path=None, title="", is_networked=True):
     """
     Plots the Train vs Test scores across different dataset sizes.
     """
     sizes = results['train_size']
-    title_lower = title.lower() if title else ""
-    if 'non networked' in title_lower or 'non network' in title_lower or 'non-network' in title_lower or 'non_network' in title_lower:
-        color = 'black'
-    else:
-        color = '#CC0000'
+    
+    # Using the cleaner color logic we set up earlier
+    color = '#CC0000' if is_networked else '#333333'
         
-    plt.figure(figsize=(10, 6))
+    # 1. Make the figure much more compact and square
+    plt.figure(figsize=(6, 5))
     
     # Thicker line (4), bigger dots on the line (markersize=12)
     plt.plot(sizes, results['test_score'], 'o-', label='Test Score (R²)', color=color, linewidth=4, markersize=12)
-    plt.gca().invert_xaxis() # Reverse the x axis
     
-    plt.title(title)
-    plt.xlabel("Number of Training Samples")
-    plt.ylabel("R² Score", fontsize=36)
-    
-    # Set 12k format and more entries on axis
     ax = plt.gca()
+    ax.invert_xaxis() # Reverse the x axis
+    
+    # 2. Remove top and right borders to match reference
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    
+    if title:
+        plt.title(title)
+        
+    # Updated Y-label to match reference
+    plt.ylabel("R² (Test set)", fontsize=36)
+    
+    # 3. Explicit Y-axis intervals to match reference exactly
+    plt.yticks([0, 0.25, 0.5, 0.75, 1.0])
+    
+    # 4. Format X-axis with 2 decimal places and capital 'K'
     from matplotlib.ticker import FuncFormatter, MaxNLocator
-    ax.xaxis.set_major_locator(MaxNLocator(nbins=10))
+    # Reduced number of bins so the vertical text doesn't overlap
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=7)) 
+    
     def format_k(x, pos):
         if x >= 1000:
-            return f'{int(x/1000)}k'
+            # Formats to 2 decimal places, e.g., 33.58K
+            return f'{x/1000:.2f}K'.replace('.00K', 'K')
         return f'{int(x)}'
+        
     ax.xaxis.set_major_formatter(FuncFormatter(format_k))
     
-    plt.ylim(0, 1.05) # R2 is typically <= 1
-    plt.legend()
+    # 5. Rotate X labels 90 degrees and make tick marks thicker
+    plt.xticks(rotation=90)
+
+    ax.tick_params(axis='y', labelsize=28, width=2, length=8) 
+    ax.tick_params(axis='x', labelsize=28, width=2, length=8) 
+    
+    plt.ylim(0, 1.05) 
+    
+    # Removed the box around the legend to keep it clean
+    plt.legend(frameon=False) 
     plt.grid(False)
     
+    plt.tight_layout()
+    
     if output_path:
-        plt.savefig(output_path)
+        plt.savefig(output_path, bbox_inches='tight')
         print(f"Experiment plot saved to {output_path}")
-    else:
-        plt.show()
+    
+    plt.show()
