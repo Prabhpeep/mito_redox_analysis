@@ -114,8 +114,8 @@ def plot_experiment_results(results, output_path=None, title="", is_networked=Tr
     # 5. Rotate X labels 90 degrees and make tick marks thicker
     plt.xticks(rotation=90)
 
-    ax.tick_params(axis='y', labelsize=20, width=2, length=8) 
-    ax.tick_params(axis='x', labelsize=20, width=2, length=8) 
+    ax.tick_params(axis='y', labelsize=24, width=2, length=8) 
+    ax.tick_params(axis='x', labelsize=24, width=2, length=8) 
     
     plt.ylim(0, 1.05) 
     
