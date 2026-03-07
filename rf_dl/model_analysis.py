@@ -57,7 +57,7 @@ def plot_predicted_vs_actual(y_test, y_pred, title="Predicted vs Actual", is_net
     
     # Regression line (Least Squares)
     m, b = np.polyfit(y_test, y_pred, 1)
-    x_line = np.array([min_val, max_val + 0.1])
+    x_line = np.array([min_val, max_val + 0.05])
     if is_networked:
         plt.plot(x_line, m*x_line + b, color='#800000', linewidth=4.0, label='Regression Line (Least Squares)')
     else:
@@ -70,7 +70,7 @@ def plot_predicted_vs_actual(y_test, y_pred, title="Predicted vs Actual", is_net
     # Dialed down to 24px as previously discussed
     plt.tick_params(axis='y', labelsize=28)
      # Dialed down to 24px as previously discussed
-    plt.tick_params(axis='x', labelsize=28)
+    plt.tick_params(axis='x', labelsize=26)
     
     # This will now automatically pick up our invisible R² entry instead of the scatter points
     plt.legend()
