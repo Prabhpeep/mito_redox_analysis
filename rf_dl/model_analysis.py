@@ -20,7 +20,7 @@ def plot_feature_importance(model, feature_names, top_n=10, title="Top 10 Featur
     
     plt.figure(figsize=(10, 6))
     sns.barplot(x='Feature', y='Importance', data=feature_imp_df.head(top_n), 
-                facecolor='none', edgecolor=color, linewidth=2)
+                facecolor='none', edgecolor=color, linewidth=4)
     
     plt.title(title)
     plt.xlabel('Features')
@@ -57,8 +57,11 @@ def plot_predicted_vs_actual(y_test, y_pred, title="Predicted vs Actual", is_net
     
     # Regression line (Least Squares)
     m, b = np.polyfit(y_test, y_pred, 1)
-    x_line = np.array([min_val, max_val])
-    plt.plot(x_line, m*x_line + b, color='#333333', linewidth=4.0, label='Regression Line (Least Squares)')
+    x_line = np.array([min_val, max_val + 0.1])
+    if is_networked:
+        plt.plot(x_line, m*x_line + b, color='#800000', linewidth=4.0, label='Regression Line (Least Squares)')
+    else:
+        plt.plot(x_line, m*x_line + b, color='#333333', linewidth=4.0, label='Regression Line (Least Squares)')
     
     plt.title(title)
     plt.xlabel("Actual Values")
