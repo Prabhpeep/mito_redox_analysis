@@ -93,7 +93,7 @@ def plot_experiment_results(results, output_path=None, title="", is_networked=Tr
         plt.title(title)
         
     # Updated Y-label to match reference
-    plt.ylabel("R² (Test set)", fontsize=36)
+    plt.ylabel("R² (Test set)", fontsize=28)
     
     # 3. Explicit Y-axis intervals to match reference exactly
     plt.yticks([0, 0.25, 0.5, 0.75, 1.0])
@@ -114,13 +114,13 @@ def plot_experiment_results(results, output_path=None, title="", is_networked=Tr
     # 5. Rotate X labels 90 degrees and make tick marks thicker
     plt.xticks(rotation=90)
 
-    ax.tick_params(axis='y', labelsize=28, width=2, length=8) 
-    ax.tick_params(axis='x', labelsize=28, width=2, length=8) 
+    ax.tick_params(axis='y', labelsize=20, width=2, length=8) 
+    ax.tick_params(axis='x', labelsize=20, width=2, length=8) 
     
     plt.ylim(0, 1.05) 
     
     # Removed the box around the legend to keep it clean
-    plt.legend(frameon=False) 
+    plt.legend(frameon=False, fontsize=18) 
     plt.grid(False)
     
     plt.tight_layout()
